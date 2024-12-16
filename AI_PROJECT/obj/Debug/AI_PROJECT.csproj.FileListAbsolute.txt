@@ -1,0 +1,11 @@
+E:\HK5\AI_PROJECT\AI_PROJECT\obj\Debug\AI_PROJECT.csproj.AssemblyReference.cache
+E:\HK5\AI_PROJECT\AI_PROJECT\obj\Debug\AI_PROJECT.Properties.Resources.resources
+E:\HK5\AI_PROJECT\AI_PROJECT\obj\Debug\AI_PROJECT.csproj.GenerateResource.cache
+E:\HK5\AI_PROJECT\AI_PROJECT\obj\Debug\AI_PROJECT.csproj.CoreCompileInputs.cache
+E:\HK5\AI_PROJECT\AI_PROJECT\bin\Debug\AI_PROJECT.exe.config
+E:\HK5\AI_PROJECT\AI_PROJECT\bin\Debug\AI_PROJECT.exe
+E:\HK5\AI_PROJECT\AI_PROJECT\bin\Debug\AI_PROJECT.pdb
+E:\HK5\AI_PROJECT\AI_PROJECT\obj\Debug\AI_PROJECT.exe
+E:\HK5\AI_PROJECT\AI_PROJECT\obj\Debug\AI_PROJECT.pdb
+E:\HK5\AI_PROJECT\AI_PROJECT\obj\Debug\AI_PROJECT.MainForm.resources
+E:\HK5\AI_PROJECT\AI_PROJECT\obj\Debug\AI_PROJECT.UI.CreateExamForm.resources
