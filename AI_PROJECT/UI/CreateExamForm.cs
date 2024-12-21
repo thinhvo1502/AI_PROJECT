@@ -24,8 +24,36 @@ namespace AI_PROJECT.UI
             InitializeComponent();
             _examService = new ExamService();
             _categoryService = new CategoryService();
-            FormStyling.ApplyStyles(this);
+            ApplyCustomStyles();
             LoadCategories();
+        }
+        private void ApplyCustomStyles()
+        {
+            this.BackColor = Color.FromArgb(240, 240, 240);
+
+            foreach (Control control in this.Controls)
+            {
+                if (control is TextBox)
+                {
+                    ((TextBox)control).BorderStyle = BorderStyle.FixedSingle;
+                }
+                else if (control is Button)
+                {
+                    ((Button)control).FlatStyle = FlatStyle.Flat;
+                    ((Button)control).FlatAppearance.BorderSize = 0;
+                    ((Button)control).Cursor = Cursors.Hand;
+                }
+            }
+
+            dgvQuestions.BorderStyle = BorderStyle.None;
+            dgvQuestions.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(238, 239, 249);
+            dgvQuestions.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvQuestions.DefaultCellStyle.SelectionBackColor = Color.FromArgb(208, 225, 243);
+            dgvQuestions.DefaultCellStyle.SelectionForeColor = Color.Black;
+            dgvQuestions.EnableHeadersVisualStyles = false;
+            dgvQuestions.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dgvQuestions.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 150, 136);
+            dgvQuestions.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
         }
 
         private void LoadCategories()
@@ -48,19 +76,47 @@ namespace AI_PROJECT.UI
 
         private void LoadQuestions(int categoryId)
         {
+            // Reset DataGridView
+            dgvQuestions.DataSource = null;
+            dgvQuestions.Rows.Clear();
+
+            // Lấy dữ liệu câu hỏi từ dịch vụ
             _questions = _examService.GetQuestionsByCategory(categoryId);
+
+            // Cập nhật lại DataSource
             dgvQuestions.DataSource = _questions.Select(q => new
             {
                 q.QuestionID,
-                Question = q.QuestionText.Length > 50 ? q.QuestionText.Substring(0, 47) + "..." : q.QuestionText,
-                IsSelected = false
+                Question = q.QuestionText,
             }).ToList();
 
+            // Ẩn cột "QuestionID" và thay đổi tên cột "Question"
             dgvQuestions.Columns["QuestionID"].Visible = false;
-            dgvQuestions.Columns["IsSelected"].HeaderText = "Select";
             dgvQuestions.Columns["Question"].HeaderText = "Question";
+
+            // Kiểm tra xem cột "Select" đã tồn tại chưa
+            if (!dgvQuestions.Columns.Contains("IsSelected"))
+            {
+                // Thêm cột checkbox vào đầu DataGridView
+                DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn();
+                checkBoxColumn.HeaderText = "Select";
+                checkBoxColumn.Name = "IsSelected";
+                dgvQuestions.Columns.Insert(0, checkBoxColumn);
+            }
+
+            // Tự động điều chỉnh kích thước cột
             dgvQuestions.AutoResizeColumns();
         }
+
+        private void dgvQuestions_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == dgvQuestions.Columns["IsSelected"].Index && e.RowIndex >= 0)
+            {
+                dgvQuestions.EndEdit();
+                dgvQuestions.Rows[e.RowIndex].Cells["IsSelected"].Value = !Convert.ToBoolean(dgvQuestions.Rows[e.RowIndex].Cells["IsSelected"].Value);
+            }
+        }
+
 
         private void btnCreateExam_Click(object sender, EventArgs e)
         {
