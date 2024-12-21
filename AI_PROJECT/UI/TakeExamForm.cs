@@ -21,12 +21,14 @@ namespace AI_PROJECT.UI
         private Timer _examTimer;
         private int _remainingTime;
         private Exam _currentExam;
+        private UserService _userService; // Added UserService
 
-        public TakeExamForm()
+        public TakeExamForm(UserService userService)
         {
             InitializeComponent();
             _examService = new ExamService();
             _userAnswers = new Dictionary<int, string>();
+            _userService = userService;
             FormStyling.ApplyStyles(this);
         }
 
@@ -55,7 +57,6 @@ namespace AI_PROJECT.UI
             if (cmbExams.SelectedItem is ComboBoxItem selectedExam)
             {
                 _currentExam = (Exam)selectedExam.Value;
-                lblExamName.Text = _currentExam.ExamName;
                 _examQuestions = _examService.GetExamQuestions(_currentExam.ExamID);
                 if (_examQuestions.Count == 0)
                 {
@@ -65,6 +66,7 @@ namespace AI_PROJECT.UI
                 _currentQuestionIndex = 0;
                 _userAnswers.Clear();
                 StartExamTimer();
+                DisplayExamInfo();
                 DisplayQuestion();
                 ToggleExamControls(true);
             }
@@ -106,6 +108,8 @@ namespace AI_PROJECT.UI
 
         private void ToggleExamControls(bool visible)
         {
+            lblExamTitle.Visible = visible;
+            lblExamDescription.Visible = visible;
             lblQuestion.Visible = visible;
             rbAnswer1.Visible = visible;
             rbAnswer2.Visible = visible;
@@ -115,7 +119,6 @@ namespace AI_PROJECT.UI
             btnNext.Visible = visible;
             btnSubmit.Visible = visible;
             lblTimer.Visible = visible;
-            lblExamName.Visible = visible;
 
             lblTitle.Visible = !visible;
             lblSelectExam.Visible = !visible;
@@ -123,10 +126,16 @@ namespace AI_PROJECT.UI
             btnStartExam.Visible = !visible;
         }
 
+        private void DisplayExamInfo()
+        {
+            lblExamTitle.Text = _currentExam.ExamName;
+/*            lblExamDescription.Text = _currentExam.Description;
+*/        }
+
         private void DisplayQuestion()
         {
             var question = _examQuestions[_currentQuestionIndex];
-            lblQuestion.Text = question.QuestionText;
+            lblQuestion.Text = $"Question {_currentQuestionIndex + 1} of {_examQuestions.Count}: {question.QuestionText}";
             rbAnswer1.Text = question.CorrectAnswer;
             rbAnswer2.Text = question.WrongAnswer1;
             rbAnswer3.Text = question.WrongAnswer2;
@@ -200,9 +209,17 @@ namespace AI_PROJECT.UI
         {
             _examTimer.Stop();
             int score = _examService.CalculateScore(_currentExam.ExamID, _userAnswers);
+            SaveExamHistory(score);
             MessageBox.Show($"Your score: {score}%", "Exam Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
             ToggleExamControls(false);
             LoadExams();
+        }
+
+        private void SaveExamHistory(int score)
+        {
+            int timeTaken = _currentExam.TimeLimit * 60 - _remainingTime;
+            MessageBox.Show(_userService.CurrentUser.UserID.ToString());
+            _examService.SaveExamHistory(_userService.CurrentUser.UserID, _currentExam.ExamID, score, timeTaken);
         }
     }
 

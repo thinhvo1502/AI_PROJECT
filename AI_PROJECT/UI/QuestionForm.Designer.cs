@@ -42,6 +42,11 @@
             this.lblWrongAnswer3 = new System.Windows.Forms.Label();
             this.txtWrongAnswer3 = new System.Windows.Forms.TextBox();
             this.btnAddQuestion = new System.Windows.Forms.Button();
+            this.lstQuestions = new System.Windows.Forms.ListBox();
+            this.btnViewQuestion = new System.Windows.Forms.Button();
+            this.btnEditQuestion = new System.Windows.Forms.Button();
+            this.btnDeleteQuestion = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblTitle
@@ -163,11 +168,66 @@
             this.btnAddQuestion.UseVisualStyleBackColor = true;
             this.btnAddQuestion.Click += new System.EventHandler(this.btnAddQuestion_Click);
             // 
+            // lstQuestions
+            // 
+            this.lstQuestions.FormattingEnabled = true;
+            this.lstQuestions.ItemHeight = 17;
+            this.lstQuestions.Location = new System.Drawing.Point(20, 380);
+            this.lstQuestions.Name = "lstQuestions";
+            this.lstQuestions.Size = new System.Drawing.Size(320, 140);
+            this.lstQuestions.TabIndex = 14;
+            // 
+            // btnViewQuestion
+            // 
+            this.btnViewQuestion.Location = new System.Drawing.Point(20, 530);
+            this.btnViewQuestion.Name = "btnViewQuestion";
+            this.btnViewQuestion.Size = new System.Drawing.Size(100, 35);
+            this.btnViewQuestion.TabIndex = 15;
+            this.btnViewQuestion.Text = "View";
+            this.btnViewQuestion.UseVisualStyleBackColor = true;
+            this.btnViewQuestion.Click += new System.EventHandler(this.btnViewQuestion_Click);
+            // 
+            // btnEditQuestion
+            // 
+            this.btnEditQuestion.Location = new System.Drawing.Point(130, 530);
+            this.btnEditQuestion.Name = "btnEditQuestion";
+            this.btnEditQuestion.Size = new System.Drawing.Size(100, 35);
+            this.btnEditQuestion.TabIndex = 16;
+            this.btnEditQuestion.Text = "Edit";
+            this.btnEditQuestion.UseVisualStyleBackColor = true;
+            this.btnEditQuestion.Click += new System.EventHandler(this.btnEditQuestion_Click);
+            // 
+            // btnDeleteQuestion
+            // 
+            this.btnDeleteQuestion.Location = new System.Drawing.Point(240, 530);
+            this.btnDeleteQuestion.Name = "btnDeleteQuestion";
+            this.btnDeleteQuestion.Size = new System.Drawing.Size(100, 35);
+            this.btnDeleteQuestion.TabIndex = 17;
+            this.btnDeleteQuestion.Text = "Delete";
+            this.btnDeleteQuestion.UseVisualStyleBackColor = true;
+            this.btnDeleteQuestion.Click += new System.EventHandler(this.btnDeleteQuestion_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(20, 330);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(100, 35);
+            this.btnCancel.TabIndex = 18;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Visible = false;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
             // QuestionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(360, 390);
+            this.ClientSize = new System.Drawing.Size(360, 580);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnDeleteQuestion);
+            this.Controls.Add(this.btnEditQuestion);
+            this.Controls.Add(this.btnViewQuestion);
+            this.Controls.Add(this.lstQuestions);
             this.Controls.Add(this.btnAddQuestion);
             this.Controls.Add(this.txtWrongAnswer3);
             this.Controls.Add(this.lblWrongAnswer3);
@@ -204,6 +264,11 @@
         private System.Windows.Forms.Label lblWrongAnswer3;
         private System.Windows.Forms.TextBox txtWrongAnswer3;
         private System.Windows.Forms.Button btnAddQuestion;
+        private System.Windows.Forms.ListBox lstQuestions;
+        private System.Windows.Forms.Button btnViewQuestion;
+        private System.Windows.Forms.Button btnEditQuestion;
+        private System.Windows.Forms.Button btnDeleteQuestion;
+        private System.Windows.Forms.Button btnCancel;
     }
 
         #endregion

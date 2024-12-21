@@ -7,7 +7,7 @@ namespace AI_PROJECT
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        
 
         /// <summary>
         /// Clean up any resources being used.
@@ -35,6 +35,9 @@ namespace AI_PROJECT
             this.btnCreateExam = new System.Windows.Forms.Button();
             this.btnTakeExam = new System.Windows.Forms.Button();
             this.lblWelcome = new System.Windows.Forms.Label();
+            this.btnExamHistory = new System.Windows.Forms.Button();
+            this.btnEditExam = new System.Windows.Forms.Button();
+            this.btnDeleteExam = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnManageCategories
@@ -87,11 +90,44 @@ namespace AI_PROJECT
             this.lblWelcome.TabIndex = 4;
             this.lblWelcome.Text = "Welcome to the Quiz System";
             // 
+            // btnExamHistory
+            // 
+            this.btnExamHistory.Location = new System.Drawing.Point(50, 400);
+            this.btnExamHistory.Name = "btnExamHistory";
+            this.btnExamHistory.Size = new System.Drawing.Size(250, 50);
+            this.btnExamHistory.TabIndex = 5;
+            this.btnExamHistory.Text = "View Exam History";
+            this.btnExamHistory.UseVisualStyleBackColor = true;
+            this.btnExamHistory.Click += new System.EventHandler(this.btnExamHistory_Click);
+            // 
+            // btnEditExam
+            // 
+            this.btnEditExam.Location = new System.Drawing.Point(50, 470);
+            this.btnEditExam.Name = "btnEditExam";
+            this.btnEditExam.Size = new System.Drawing.Size(250, 50);
+            this.btnEditExam.TabIndex = 6;
+            this.btnEditExam.Text = "Edit Exam";
+            this.btnEditExam.UseVisualStyleBackColor = true;
+            this.btnEditExam.Click += new System.EventHandler(this.btnEditExam_Click);
+            // 
+            // btnDeleteExam
+            // 
+            this.btnDeleteExam.Location = new System.Drawing.Point(50, 540);
+            this.btnDeleteExam.Name = "btnDeleteExam";
+            this.btnDeleteExam.Size = new System.Drawing.Size(250, 50);
+            this.btnDeleteExam.TabIndex = 7;
+            this.btnDeleteExam.Text = "Delete Exam";
+            this.btnDeleteExam.UseVisualStyleBackColor = true;
+            this.btnDeleteExam.Click += new System.EventHandler(this.btnDeleteExam_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(350, 420);
+            this.ClientSize = new System.Drawing.Size(350, 610);
+            this.Controls.Add(this.btnDeleteExam);
+            this.Controls.Add(this.btnEditExam);
+            this.Controls.Add(this.btnExamHistory);
             this.Controls.Add(this.lblWelcome);
             this.Controls.Add(this.btnTakeExam);
             this.Controls.Add(this.btnCreateExam);
@@ -110,6 +146,8 @@ namespace AI_PROJECT
         private System.Windows.Forms.Button btnCreateExam;
         private System.Windows.Forms.Button btnTakeExam;
         private System.Windows.Forms.Label lblWelcome;
+        private System.Windows.Forms.Button btnEditExam;
+        private System.Windows.Forms.Button btnDeleteExam;
         #endregion
     }
 }

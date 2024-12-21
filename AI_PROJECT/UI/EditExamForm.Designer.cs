@@ -1,11 +1,11 @@
 ﻿namespace AI_PROJECT.UI
 {
-    partial class CreateExamForm
+    partial class EditExamForm
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-       
+        private System.ComponentModel.IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -35,26 +35,22 @@
             this.txtDescription = new System.Windows.Forms.TextBox();
             this.lblTimeLimit = new System.Windows.Forms.Label();
             this.numTimeLimit = new System.Windows.Forms.NumericUpDown();
-            this.lblCategory = new System.Windows.Forms.Label();
-            this.cmbCategories = new System.Windows.Forms.ComboBox();
             this.lblQuestions = new System.Windows.Forms.Label();
-            this.lstQuestions = new System.Windows.Forms.CheckedListBox();
-            this.btnCreateExam = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.dgvQuestions = new System.Windows.Forms.DataGridView();
             this.btnViewDetails = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.numTimeLimit)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvQuestions)).BeginInit();
             this.SuspendLayout();
             // 
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
-            this.lblTitle.Font = FormStyling.HeaderFont;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lblTitle.Location = new System.Drawing.Point(20, 20);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(120, 30);
+            this.lblTitle.Size = new System.Drawing.Size(114, 30);
             this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "Create Exam";
+            this.lblTitle.Text = "Edit Exam";
             // 
             // lblExamName
             // 
@@ -108,84 +104,66 @@
             this.numTimeLimit.TabIndex = 6;
             this.numTimeLimit.Value = new decimal(new int[] { 60, 0, 0, 0 });
             // 
-            // lblCategory
-            // 
-            this.lblCategory.AutoSize = true;
-            this.lblCategory.Location = new System.Drawing.Point(20, 220);
-            this.lblCategory.Name = "lblCategory";
-            this.lblCategory.Size = new System.Drawing.Size(65, 17);
-            this.lblCategory.TabIndex = 7;
-            this.lblCategory.Text = "Category:";
-            // 
-            // cmbCategories
-            // 
-            this.cmbCategories.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbCategories.FormattingEnabled = true;
-            this.cmbCategories.Location = new System.Drawing.Point(140, 217);
-            this.cmbCategories.Name = "cmbCategories";
-            this.cmbCategories.Size = new System.Drawing.Size(200, 25);
-            this.cmbCategories.TabIndex = 8;
-            this.cmbCategories.SelectedIndexChanged += new System.EventHandler(this.cmbCategories_SelectedIndexChanged);
-            // 
             // lblQuestions
             // 
             this.lblQuestions.AutoSize = true;
-            this.lblQuestions.Location = new System.Drawing.Point(20, 260);
+            this.lblQuestions.Location = new System.Drawing.Point(20, 220);
             this.lblQuestions.Name = "lblQuestions";
             this.lblQuestions.Size = new System.Drawing.Size(69, 17);
-            this.lblQuestions.TabIndex = 9;
+            this.lblQuestions.TabIndex = 7;
             this.lblQuestions.Text = "Questions:";
-            // 
-            // lstQuestions
-            // 
-            this.lstQuestions.FormattingEnabled = true;
-            this.lstQuestions.Location = new System.Drawing.Point(140, 260);
-            this.lstQuestions.Name = "lstQuestions";
-            this.lstQuestions.Size = new System.Drawing.Size(200, 184);
-            this.lstQuestions.TabIndex = 10;
             // 
             // dgvQuestions
             // 
             this.dgvQuestions.AllowUserToAddRows = false;
             this.dgvQuestions.AllowUserToDeleteRows = false;
-            this.dgvQuestions.Location = new System.Drawing.Point(140, 260);
+            this.dgvQuestions.Location = new System.Drawing.Point(20, 250);
             this.dgvQuestions.MultiSelect = true;
             this.dgvQuestions.Name = "dgvQuestions";
             this.dgvQuestions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvQuestions.Size = new System.Drawing.Size(200, 184);
-            this.dgvQuestions.TabIndex = 10;
+            this.dgvQuestions.Size = new System.Drawing.Size(320, 184);
+            this.dgvQuestions.TabIndex = 8;
             // 
-            // btnCreateExam
+            // btnSave
             // 
-            this.btnCreateExam.Location = new System.Drawing.Point(250, 450);
-            this.btnCreateExam.Name = "btnCreateExam";
-            this.btnCreateExam.Size = new System.Drawing.Size(120, 35);
-            this.btnCreateExam.TabIndex = 11;
-            this.btnCreateExam.Text = "Create Exam";
-            this.btnCreateExam.UseVisualStyleBackColor = true;
-            this.btnCreateExam.Click += new System.EventHandler(this.btnCreateExam_Click);
+            this.btnSave.Location = new System.Drawing.Point(130, 440);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(100, 35);
+            this.btnSave.TabIndex = 9;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(240, 440);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(100, 35);
+            this.btnCancel.TabIndex = 10;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnViewDetails
             // 
-            this.btnViewDetails.Location = new System.Drawing.Point(140, 450);
+            this.btnViewDetails.Location = new System.Drawing.Point(20, 440);
             this.btnViewDetails.Name = "btnViewDetails";
             this.btnViewDetails.Size = new System.Drawing.Size(100, 35);
-            this.btnViewDetails.TabIndex = 12;
+            this.btnViewDetails.TabIndex = 11;
             this.btnViewDetails.Text = "View Details";
             this.btnViewDetails.UseVisualStyleBackColor = true;
             this.btnViewDetails.Click += new System.EventHandler(this.btnViewDetails_Click);
             // 
-            // CreateExamForm
+            // EditExamForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(360, 520);
+            this.ClientSize = new System.Drawing.Size(360, 500);
             this.Controls.Add(this.btnViewDetails);
-            this.Controls.Add(this.btnCreateExam);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.dgvQuestions);
             this.Controls.Add(this.lblQuestions);
-            this.Controls.Add(this.cmbCategories);
-            this.Controls.Add(this.lblCategory);
             this.Controls.Add(this.numTimeLimit);
             this.Controls.Add(this.lblTimeLimit);
             this.Controls.Add(this.txtDescription);
@@ -193,10 +171,10 @@
             this.Controls.Add(this.txtExamName);
             this.Controls.Add(this.lblExamName);
             this.Controls.Add(this.lblTitle);
-            this.Font = FormStyling.NormalFont;
-            this.Name = "CreateExamForm";
+            this.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Name = "EditExamForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Create Exam";
+            this.Text = "Edit Exam";
             ((System.ComponentModel.ISupportInitialize)(this.numTimeLimit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvQuestions)).EndInit();
             this.ResumeLayout(false);
@@ -210,14 +188,12 @@
         private System.Windows.Forms.TextBox txtDescription;
         private System.Windows.Forms.Label lblTimeLimit;
         private System.Windows.Forms.NumericUpDown numTimeLimit;
-        private System.Windows.Forms.Label lblCategory;
-        private System.Windows.Forms.ComboBox cmbCategories;
         private System.Windows.Forms.Label lblQuestions;
-        private System.Windows.Forms.CheckedListBox lstQuestions;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.DataGridView dgvQuestions;
-        private System.Windows.Forms.Button btnCreateExam;
         private System.Windows.Forms.Button btnViewDetails;
-    }
 
         #endregion
     }
+}

@@ -49,5 +49,76 @@ namespace AI_PROJECT.DAL.Repositories
                 command.ExecuteNonQuery();
             }
         }
+
+        public Category GetCategoryById(int categoryId)
+        {
+            using (var connection = _context.GetConnection())
+            {
+                connection.Open();
+                var command = new SqlCommand("SELECT * FROM Categories WHERE CategoryID = @CategoryID", connection);
+                command.Parameters.AddWithValue("@CategoryID", categoryId);
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new Category
+                        {
+                            CategoryID = reader.GetInt32(0),
+                            CategoryName = reader.GetString(1)
+                        };
+                    }
+                }
+            }
+            return null;
+        }
+
+        public void UpdateCategory(Category category)
+        {
+            using (var connection = _context.GetConnection())
+            {
+                connection.Open();
+                var command = new SqlCommand("UPDATE Categories SET CategoryName = @CategoryName WHERE CategoryID = @CategoryID", connection);
+                command.Parameters.AddWithValue("@CategoryID", category.CategoryID);
+                command.Parameters.AddWithValue("@CategoryName", category.CategoryName);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteCategoryAndRelatedRecords(int categoryId)
+        {
+            using (var connection = _context.GetConnection())
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // Xóa các bản ghi liên quan trong bảng ExamQuestions
+                        var deleteExamQuestionsCommand = new SqlCommand(
+                            "DELETE FROM ExamQuestions WHERE QuestionID IN (SELECT QuestionID FROM Questions WHERE CategoryID = @CategoryID)",
+                            connection, transaction);
+                        deleteExamQuestionsCommand.Parameters.AddWithValue("@CategoryID", categoryId);
+                        deleteExamQuestionsCommand.ExecuteNonQuery();
+
+                        // Xóa các câu hỏi thuộc category
+                        var deleteQuestionsCommand = new SqlCommand("DELETE FROM Questions WHERE CategoryID = @CategoryID", connection, transaction);
+                        deleteQuestionsCommand.Parameters.AddWithValue("@CategoryID", categoryId);
+                        deleteQuestionsCommand.ExecuteNonQuery();
+
+                        // Xóa category
+                        var deleteCategoryCommand = new SqlCommand("DELETE FROM Categories WHERE CategoryID = @CategoryID", connection, transaction);
+                        deleteCategoryCommand.Parameters.AddWithValue("@CategoryID", categoryId);
+                        deleteCategoryCommand.ExecuteNonQuery();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
     }
 }

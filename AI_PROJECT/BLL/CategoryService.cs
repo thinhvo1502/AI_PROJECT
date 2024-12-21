@@ -26,10 +26,36 @@ namespace AI_PROJECT.BLL
         {
             if (string.IsNullOrWhiteSpace(categoryName))
             {
-                throw new System.ArgumentException("Category name cannot be empty.");
+                throw new ArgumentException("Category name cannot be empty.");
             }
             var category = new Category { CategoryName = categoryName };
             _categoryRepository.AddCategory(category);
+        }
+
+        public Category GetCategoryById(int categoryId)
+        {
+            return _categoryRepository.GetCategoryById(categoryId);
+        }
+
+        public void UpdateCategory(Category category)
+        {
+            if (string.IsNullOrWhiteSpace(category.CategoryName))
+            {
+                throw new ArgumentException("Category name cannot be empty.");
+            }
+            _categoryRepository.UpdateCategory(category);
+        }
+
+        public void DeleteCategory(int categoryId)
+        {
+            try
+            {
+                _categoryRepository.DeleteCategoryAndRelatedRecords(categoryId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while deleting the category. It may be in use in an exam.", ex);
+            }
         }
     }
 }

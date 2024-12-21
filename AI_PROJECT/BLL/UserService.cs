@@ -61,7 +61,7 @@ namespace AI_PROJECT.BLL
             return storedHash == hashOfInput;
         }
 
-        public User CurrentUser { get; private set; }
+        public User CurrentUser { get; set; }
 
         public void SetCurrentUser(User user)
         {

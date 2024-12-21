@@ -12,48 +12,33 @@ using System.Windows.Forms;
 
 namespace AI_PROJECT.UI
 {
-    public partial class CreateExamForm : Form
+    public partial class EditExamForm : Form
     {
         private ExamService _examService;
-        private CategoryService _categoryService;
-        private List<Question> _questions;
-        private System.ComponentModel.IContainer components = null;
+        private Exam _currentExam;
+        private List<Question> _allQuestions;
 
-        public CreateExamForm()
+        public EditExamForm(int examId)
         {
             InitializeComponent();
             _examService = new ExamService();
-            _categoryService = new CategoryService();
+            _currentExam = _examService.GetExamById(examId);
+            _allQuestions = _examService.GetAllQuestions();
             FormStyling.ApplyStyles(this);
-            LoadCategories();
+            LoadExamData();
         }
-
-        private void LoadCategories()
+        private void LoadExamData()
         {
-            cmbCategories.Items.Clear();
-            var categories = _categoryService.GetAllCategories();
-            foreach (var category in categories)
-            {
-                cmbCategories.Items.Add(new ComboBoxItem { Text = category.CategoryName, Value = category.CategoryID });
-            }
-        }
+            txtExamName.Text = _currentExam.ExamName;
+            txtDescription.Text = _currentExam.Description;
+            numTimeLimit.Value = _currentExam.TimeLimit;
 
-        private void cmbCategories_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cmbCategories.SelectedItem is ComboBoxItem selectedCategory)
-            {
-                LoadQuestions((int)selectedCategory.Value);
-            }
-        }
-
-        private void LoadQuestions(int categoryId)
-        {
-            _questions = _examService.GetQuestionsByCategory(categoryId);
-            dgvQuestions.DataSource = _questions.Select(q => new
+            var examQuestions = _examService.GetExamQuestions(_currentExam.ExamID);
+            dgvQuestions.DataSource = _allQuestions.Select(q => new
             {
                 q.QuestionID,
                 Question = q.QuestionText.Length > 50 ? q.QuestionText.Substring(0, 47) + "..." : q.QuestionText,
-                IsSelected = false
+                IsSelected = examQuestions.Any(eq => eq.QuestionID == q.QuestionID)
             }).ToList();
 
             dgvQuestions.Columns["QuestionID"].Visible = false;
@@ -62,15 +47,11 @@ namespace AI_PROJECT.UI
             dgvQuestions.AutoResizeColumns();
         }
 
-        private void btnCreateExam_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             try
             {
-                var examName = txtExamName.Text;
-                var description = txtDescription.Text;
-                var timeLimit = (int)numTimeLimit.Value;
                 var selectedQuestionIds = new List<int>();
-
                 foreach (DataGridViewRow row in dgvQuestions.Rows)
                 {
                     if (Convert.ToBoolean(row.Cells["IsSelected"].Value))
@@ -79,9 +60,17 @@ namespace AI_PROJECT.UI
                     }
                 }
 
-                int examId = _examService.CreateExam(examName, description, timeLimit, selectedQuestionIds);
-                MessageBox.Show($"Exam created successfully! Exam ID: {examId}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                ClearFields();
+                _examService.UpdateExam(
+                    _currentExam.ExamID,
+                    txtExamName.Text,
+                    txtDescription.Text,
+                    (int)numTimeLimit.Value,
+                    selectedQuestionIds
+                );
+
+                MessageBox.Show("Exam updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.DialogResult = DialogResult.OK;
+                this.Close();
             }
             catch (Exception ex)
             {
@@ -89,12 +78,18 @@ namespace AI_PROJECT.UI
             }
         }
 
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+
         private void btnViewDetails_Click(object sender, EventArgs e)
         {
             if (dgvQuestions.SelectedRows.Count > 0)
             {
                 int questionId = (int)dgvQuestions.SelectedRows[0].Cells["QuestionID"].Value;
-                Question question = _questions.First(q => q.QuestionID == questionId);
+                Question question = _allQuestions.First(q => q.QuestionID == questionId);
                 string details = $"Question: {question.QuestionText}\n\n" +
                                  $"Correct Answer: {question.CorrectAnswer}\n" +
                                  $"Wrong Answer 1: {question.WrongAnswer1}\n" +
@@ -106,15 +101,6 @@ namespace AI_PROJECT.UI
             {
                 MessageBox.Show("Please select a question to view details.", "No Question Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-        }
-
-        private void ClearFields()
-        {
-            txtExamName.Clear();
-            txtDescription.Clear();
-            numTimeLimit.Value = 60;
-            cmbCategories.SelectedIndex = -1;
-            dgvQuestions.DataSource = null;
         }
     }
 }

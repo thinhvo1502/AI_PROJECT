@@ -35,6 +35,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Windows.Forms.DataVisualization.Design" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,9 +56,11 @@
     <Compile Include="DAL\DatabaseContext.cs" />
     <Compile Include="DAL\Models\Category.cs" />
     <Compile Include="DAL\Models\Exam.cs" />
+    <Compile Include="DAL\Models\ExamHistory.cs" />
     <Compile Include="DAL\Models\Question.cs" />
     <Compile Include="DAL\Models\User.cs" />
     <Compile Include="DAL\Repositories\CategoryRepository.cs" />
+    <Compile Include="DAL\Repositories\ExamHistoryRepository.cs" />
     <Compile Include="DAL\Repositories\ExamRepository.cs" />
     <Compile Include="DAL\Repositories\QuestionRepository.cs" />
     <Compile Include="DAL\Repositories\UserRepository.cs" />
@@ -70,6 +75,18 @@
     </Compile>
     <Compile Include="UI\CreateExamForm.Designer.cs">
       <DependentUpon>CreateExamForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\EditExamForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\EditExamForm.Designer.cs">
+      <DependentUpon>EditExamForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ExamHistoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ExamHistoryForm.Designer.cs">
+      <DependentUpon>ExamHistoryForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\FormStyling.cs" />
     <Compile Include="UI\MainForm.cs">
@@ -97,6 +114,12 @@
     </Compile>
     <Compile Include="UI\RegisterForm.Designer.cs">
       <DependentUpon>RegisterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SelectExamForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SelectExamForm.Designer.cs">
+      <DependentUpon>SelectExamForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\TakeExamForm.cs">
       <SubType>Form</SubType>

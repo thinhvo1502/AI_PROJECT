@@ -16,17 +16,20 @@ namespace AI_PROJECT
 {
     public partial class MainForm : Form
     {
+       private System.ComponentModel.IContainer components = null;
         private UserService _userService;
-       
+        private ExamService _examService;
+        private System.Windows.Forms.Button btnExamHistory;
 
         public MainForm(UserService userService)
         {
             InitializeComponent();
-            FormStyling.ApplyStyles(this);
             _userService = userService;
-/*            ShowLoginForm();
-*/            UpdateButtonVisibility();
+            _examService = new ExamService();
+            FormStyling.ApplyStyles(this);
+            UpdateButtonVisibility();
         }
+
         private void UpdateButtonVisibility()
         {
             bool isAdmin = _userService.IsAdmin();
@@ -34,6 +37,9 @@ namespace AI_PROJECT
             btnManageQuestions.Visible = isAdmin;
             btnCreateExam.Visible = isAdmin;
             btnTakeExam.Visible = true; // Tất cả người dùng đều có thể làm bài thi
+            btnExamHistory.Visible = true; //All users can view exam history.
+            btnEditExam.Visible = isAdmin;
+            btnDeleteExam.Visible = isAdmin;
         }
 
         private void btnManageCategories_Click(object sender, EventArgs e)
@@ -77,9 +83,61 @@ namespace AI_PROJECT
 
         private void btnTakeExam_Click(object sender, EventArgs e)
         {
-            var takeExamForm = new TakeExamForm();
+            var takeExamForm = new TakeExamForm(_userService);
             takeExamForm.ShowDialog();
         }
+
+        private void btnExamHistory_Click(object sender, EventArgs e)
+        {
+            var examHistoryForm = new ExamHistoryForm(_userService);
+            examHistoryForm.ShowDialog();
+        }
+
+        private void btnEditExam_Click(object sender, EventArgs e)
+        {
+            if (_userService.IsAdmin())
+            {
+                var selectExamForm = new SelectExamForm(_examService);
+                if (selectExamForm.ShowDialog() == DialogResult.OK)
+                {
+                    var editExamForm = new EditExamForm(selectExamForm.SelectedExamId);
+                    editExamForm.ShowDialog();
+                }
+            }
+            else
+            {
+                MessageBox.Show("You don't have permission to access this feature.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void btnDeleteExam_Click(object sender, EventArgs e)
+        {
+            if (_userService.IsAdmin())
+            {
+                var selectExamForm = new SelectExamForm(_examService);
+                if (selectExamForm.ShowDialog() == DialogResult.OK)
+                {
+                    var result = MessageBox.Show("Are you sure you want to delete this exam? This action cannot be undone.", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result == DialogResult.Yes)
+                    {
+                        try
+                        {
+                            _examService.DeleteExam(selectExamForm.SelectedExamId);
+                            MessageBox.Show("Exam deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"An error occurred while deleting the exam: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("You don't have permission to access this feature.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
 
 
     }

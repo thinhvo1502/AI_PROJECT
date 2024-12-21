@@ -14,11 +14,13 @@ namespace AI_PROJECT.BLL
     {
         private ExamRepository _examRepository;
         private QuestionRepository _questionRepository;
+        private ExamHistoryRepository _examHistoryRepository;
 
         public ExamService()
         {
             _examRepository = new ExamRepository();
             _questionRepository = new QuestionRepository();
+            _examHistoryRepository = new ExamHistoryRepository();
         }
 
         public int CreateExam(string examName, string description, int timeLimit, List<int> selectedQuestionIds)
@@ -31,6 +33,11 @@ namespace AI_PROJECT.BLL
             if (selectedQuestionIds == null || selectedQuestionIds.Count == 0)
             {
                 throw new ArgumentException("At least one question must be selected.");
+            }
+
+            if (timeLimit <= 0)
+            {
+                throw new ArgumentException("Time limit must be greater than zero.");
             }
 
             var exam = new Exam
@@ -88,6 +95,69 @@ namespace AI_PROJECT.BLL
         public Exam GetExamById(int examId)
         {
             return _examRepository.GetExamById(examId);
+        }
+
+        public void SaveExamHistory(int userId, int examId, int score, int timeTaken)
+        {
+            var examHistory = new ExamHistory
+            {
+                UserID = userId,
+                ExamID = examId,
+                Score = score,
+                DateTaken = DateTime.Now,
+                TimeTaken = timeTaken
+            };
+            _examHistoryRepository.AddExamHistory(examHistory);
+        }
+
+        public List<ExamHistory> GetExamHistoryByUser(int userId)
+        {
+            return _examHistoryRepository.GetExamHistoryByUser(userId);
+        }
+
+
+        public void UpdateExam(int examId, string examName, string description, int timeLimit, List<int> selectedQuestionIds)
+        {
+            if (string.IsNullOrWhiteSpace(examName))
+            {
+                throw new ArgumentException("Exam name cannot be empty.");
+            }
+
+            if (selectedQuestionIds == null || selectedQuestionIds.Count == 0)
+            {
+                throw new ArgumentException("At least one question must be selected.");
+            }
+
+            if (timeLimit <= 0)
+            {
+                throw new ArgumentException("Time limit must be greater than zero.");
+            }
+
+            var exam = new Exam
+            {
+                ExamID = examId,
+                ExamName = examName,
+                Description = description,
+                TimeLimit = timeLimit
+            };
+
+            _examRepository.UpdateExam(exam);
+            _examRepository.UpdateExamQuestions(examId, selectedQuestionIds);
+        }
+
+        public void DeleteExam(int examId)
+        {
+            _examRepository.DeleteExam(examId);
+        }
+
+        public void DeleteQuestionFromExam(int examId, int questionId)
+        {
+            _examRepository.DeleteQuestionFromExam(examId, questionId);
+        }
+
+        public List<Question> GetAllQuestions()
+        {
+            return _questionRepository.GetAllQuestions();
         }
     }
 }
