@@ -24,41 +24,88 @@ namespace AI_PROJECT.UI
             _examService = new ExamService();
             _currentExam = _examService.GetExamById(examId);
             _allQuestions = _examService.GetAllQuestions();
-            FormStyling.ApplyStyles(this);
+            ApplyCustomStyles();
             LoadExamData();
         }
+        private void ApplyCustomStyles()
+        {
+            this.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+
+            foreach (Control control in this.pnlMain.Controls)
+            {
+                if (control is Button)
+                {
+                    ((Button)control).FlatStyle = FlatStyle.Flat;
+                    ((Button)control).FlatAppearance.BorderSize = 0;
+                    ((Button)control).Cursor = Cursors.Hand;
+                }
+            }
+
+            dgvQuestions.BorderStyle = BorderStyle.None;
+            dgvQuestions.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+            dgvQuestions.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvQuestions.DefaultCellStyle.SelectionBackColor = Color.FromArgb(87, 166, 74);
+            dgvQuestions.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgvQuestions.RowHeadersVisible = false;
+            dgvQuestions.EnableHeadersVisualStyles = false;
+            dgvQuestions.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dgvQuestions.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
+            dgvQuestions.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvQuestions.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        }
+
         private void LoadExamData()
         {
             txtExamName.Text = _currentExam.ExamName;
             txtDescription.Text = _currentExam.Description;
             numTimeLimit.Value = _currentExam.TimeLimit;
 
+            _allQuestions = _examService.GetAllQuestions();
             var examQuestions = _examService.GetExamQuestions(_currentExam.ExamID);
-            dgvQuestions.DataSource = _allQuestions.Select(q => new
+
+            dgvQuestions.DataSource = null;
+            dgvQuestions.Columns.Clear();
+            dgvQuestions.AutoGenerateColumns = false;
+
+            DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn();
+            checkBoxColumn.HeaderText = "Select";
+            checkBoxColumn.Name = "IsSelected";
+            checkBoxColumn.Width = 60;
+            dgvQuestions.Columns.Add(checkBoxColumn);
+
+            DataGridViewTextBoxColumn questionColumn = new DataGridViewTextBoxColumn();
+            questionColumn.DataPropertyName = "QuestionText";
+            questionColumn.HeaderText = "Question";
+            questionColumn.Name = "Question";
+            questionColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgvQuestions.Columns.Add(questionColumn);
+
+            var dataSource = _allQuestions.Select(q => new QuestionViewModel
             {
-                q.QuestionID,
-                Question = q.QuestionText.Length > 50 ? q.QuestionText.Substring(0, 47) + "..." : q.QuestionText,
+                QuestionID = q.QuestionID,
+                QuestionText = q.QuestionText,
                 IsSelected = examQuestions.Any(eq => eq.QuestionID == q.QuestionID)
             }).ToList();
 
-            dgvQuestions.Columns["QuestionID"].Visible = false;
-            dgvQuestions.Columns["IsSelected"].HeaderText = "Select";
-            dgvQuestions.Columns["Question"].HeaderText = "Question";
-            dgvQuestions.AutoResizeColumns();
+            dgvQuestions.DataSource = dataSource;
+
+            // Bind the IsSelected property to the checkbox column
+            dgvQuestions.Columns["IsSelected"].DataPropertyName = "IsSelected";
+        }
+
+        public class QuestionViewModel
+        {
+            public int QuestionID { get; set; }
+            public string QuestionText { get; set; }
+            public bool IsSelected { get; set; }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             try
             {
-                var selectedQuestionIds = new List<int>();
-                foreach (DataGridViewRow row in dgvQuestions.Rows)
-                {
-                    if (Convert.ToBoolean(row.Cells["IsSelected"].Value))
-                    {
-                        selectedQuestionIds.Add((int)row.Cells["QuestionID"].Value);
-                    }
-                }
+                var dataSource = (List<QuestionViewModel>)dgvQuestions.DataSource;
+                var selectedQuestionIds = dataSource.Where(q => q.IsSelected).Select(q => q.QuestionID).ToList();
 
                 _examService.UpdateExam(
                     _currentExam.ExamID,
@@ -88,8 +135,8 @@ namespace AI_PROJECT.UI
         {
             if (dgvQuestions.SelectedRows.Count > 0)
             {
-                int questionId = (int)dgvQuestions.SelectedRows[0].Cells["QuestionID"].Value;
-                Question question = _allQuestions.First(q => q.QuestionID == questionId);
+                var selectedQuestion = (QuestionViewModel)dgvQuestions.SelectedRows[0].DataBoundItem;
+                Question question = _allQuestions.First(q => q.QuestionID == selectedQuestion.QuestionID);
                 string details = $"Question: {question.QuestionText}\n\n" +
                                  $"Correct Answer: {question.CorrectAnswer}\n" +
                                  $"Wrong Answer 1: {question.WrongAnswer1}\n" +
@@ -102,5 +149,16 @@ namespace AI_PROJECT.UI
                 MessageBox.Show("Please select a question to view details.", "No Question Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+        private void dgvQuestions_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == dgvQuestions.Columns["IsSelected"].Index && e.RowIndex >= 0)
+            {
+                dgvQuestions.EndEdit();
+                var dataSource = (List<QuestionViewModel>)dgvQuestions.DataSource;
+                dataSource[e.RowIndex].IsSelected = !dataSource[e.RowIndex].IsSelected;
+                dgvQuestions.InvalidateRow(e.RowIndex);
+            }
+        }
     }
-}
+    }

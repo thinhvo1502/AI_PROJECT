@@ -29,9 +29,38 @@ namespace AI_PROJECT.UI
             _examService = new ExamService();
             _userAnswers = new Dictionary<int, string>();
             _userService = userService;
-            FormStyling.ApplyStyles(this);
+            ApplyCustomStyles();
         }
+        private void ApplyCustomStyles()
+        {
+            FormStyling.ApplyStyles(this);
 
+            // Custom styles for TakeExamForm
+            this.pnlExamSelection.BorderStyle = BorderStyle.FixedSingle;
+            this.pnlExamInfo.BorderStyle = BorderStyle.FixedSingle;
+            this.pnlQuestion.BorderStyle = BorderStyle.FixedSingle;
+            this.pnlNavigation.BorderStyle = BorderStyle.FixedSingle;
+
+            this.btnStartExam.BackColor = Color.FromArgb(0, 150, 136);
+            this.btnStartExam.ForeColor = Color.White;
+            this.btnStartExam.FlatStyle = FlatStyle.Flat;
+            this.btnStartExam.FlatAppearance.BorderSize = 0;
+
+            this.btnPrevious.BackColor = Color.FromArgb(63, 81, 181);
+            this.btnPrevious.ForeColor = Color.White;
+            this.btnPrevious.FlatStyle = FlatStyle.Flat;
+            this.btnPrevious.FlatAppearance.BorderSize = 0;
+
+            this.btnNext.BackColor = Color.FromArgb(63, 81, 181);
+            this.btnNext.ForeColor = Color.White;
+            this.btnNext.FlatStyle = FlatStyle.Flat;
+            this.btnNext.FlatAppearance.BorderSize = 0;
+
+            this.btnSubmit.BackColor = Color.FromArgb(76, 175, 80);
+            this.btnSubmit.ForeColor = Color.White;
+            this.btnSubmit.FlatStyle = FlatStyle.Flat;
+            this.btnSubmit.FlatAppearance.BorderSize = 0;
+        }
 
         private void TakeExamForm_Load(object sender, EventArgs e)
         {
@@ -57,14 +86,15 @@ namespace AI_PROJECT.UI
             if (cmbExams.SelectedItem is ComboBoxItem selectedExam)
             {
                 _currentExam = (Exam)selectedExam.Value;
+
                 _examQuestions = _examService.GetExamQuestions(_currentExam.ExamID);
-                if (_examQuestions.Count == 0)
+                if (_examQuestions == null || _examQuestions.Count == 0)
                 {
                     MessageBox.Show("No questions found for this exam.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 _currentQuestionIndex = 0;
-                _userAnswers.Clear();
+                _userAnswers = new Dictionary<int, string>();
                 StartExamTimer();
                 DisplayExamInfo();
                 DisplayQuestion();
@@ -128,27 +158,32 @@ namespace AI_PROJECT.UI
 
         private void DisplayExamInfo()
         {
-            lblExamTitle.Text = _currentExam.ExamName;
-/*            lblExamDescription.Text = _currentExam.Description;
-*/        }
+/*            MessageBox.Show(_currentExam.ExamName);
+*/            lblExamTitle.Text = _currentExam.ExamName;
+            /*            lblExamDescription.Text = _currentExam.Description;
+            */
+        }
 
         private void DisplayQuestion()
         {
             var question = _examQuestions[_currentQuestionIndex];
             lblQuestion.Text = $"Question {_currentQuestionIndex + 1} of {_examQuestions.Count}: {question.QuestionText}";
+           
             rbAnswer1.Text = question.CorrectAnswer;
+
             rbAnswer2.Text = question.WrongAnswer1;
             rbAnswer3.Text = question.WrongAnswer2;
             rbAnswer4.Text = question.WrongAnswer3;
 
             // Shuffle the answer options
             var random = new Random();
+            var container = pnlQuestion;
             for (int i = 0; i < 4; i++)
             {
                 int j = random.Next(i, 4);
-                var temp = Controls["rbAnswer" + (i + 1)].Text;
-                Controls["rbAnswer" + (i + 1)].Text = Controls["rbAnswer" + (j + 1)].Text;
-                Controls["rbAnswer" + (j + 1)].Text = temp;
+                var temp = container.Controls["rbAnswer" + (i + 1)].Text;
+                container.Controls["rbAnswer" + (i + 1)].Text = container.Controls["rbAnswer" + (j + 1)].Text;
+                container.Controls["rbAnswer" + (j + 1)].Text = temp;
             }
 
             // Clear previous selection
@@ -159,10 +194,10 @@ namespace AI_PROJECT.UI
             {
                 for (int i = 1; i <= 4; i++)
                 {
-                    if (Controls["rbAnswer" + i].Text == previousAnswer)
+                    if (container.Controls["rbAnswer" + i].Text == previousAnswer)
                     {
-                        ((RadioButton)Controls["rbAnswer" + i]).Checked = true;
-                        break;
+                        ((RadioButton)container.Controls["rbAnswer" + i]).Checked = true;
+                        break; 
                     }
                 }
             }
@@ -222,5 +257,6 @@ namespace AI_PROJECT.UI
             _examService.SaveExamHistory(_userService.CurrentUser.UserID, _currentExam.ExamID, score, timeTaken);
         }
     }
+
 
 }

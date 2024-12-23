@@ -22,18 +22,86 @@ namespace AI_PROJECT.UI
             InitializeComponent();
             _questionService = new QuestionService();
             _categoryService = new CategoryService();
-            FormStyling.ApplyStyles(this);
+            ApplyCustomStyles();
             LoadCategories();
             LoadQuestions();
         }
 
-        private void LoadCategories()
+        private void ApplyCustomStyles()
         {
-            cmbCategories.Items.Clear();
-            var categories = _categoryService.GetAllCategories();
-            foreach (var category in categories)
+            FormStyling.ApplyStyles(this);
+
+            // Custom styles for QuestionForm
+            this.pnlQuestionDetails.BorderStyle = BorderStyle.FixedSingle;
+            this.pnlQuestionList.BorderStyle = BorderStyle.FixedSingle;
+
+            this.btnAddQuestion.BackColor = Color.FromArgb(0, 150, 136);
+            this.btnAddQuestion.ForeColor = Color.White;
+            this.btnAddQuestion.FlatStyle = FlatStyle.Flat;
+            this.btnAddQuestion.FlatAppearance.BorderSize = 0;
+
+            this.btnCancel.BackColor = Color.FromArgb(158, 158, 158);
+            this.btnCancel.ForeColor = Color.White;
+            this.btnCancel.FlatStyle = FlatStyle.Flat;
+            this.btnCancel.FlatAppearance.BorderSize = 0;
+
+            this.btnViewDetails.BackColor = Color.FromArgb(3, 169, 244);
+            this.btnViewDetails.ForeColor = Color.White;
+            this.btnViewDetails.FlatStyle = FlatStyle.Flat;
+            this.btnViewDetails.FlatAppearance.BorderSize = 0;
+
+            this.btnEditQuestion.BackColor = Color.FromArgb(255, 152, 0);
+            this.btnEditQuestion.ForeColor = Color.White;
+            this.btnEditQuestion.FlatStyle = FlatStyle.Flat;
+            this.btnEditQuestion.FlatAppearance.BorderSize = 0;
+
+            this.btnDeleteQuestion.BackColor = Color.FromArgb(244, 67, 54);
+            this.btnDeleteQuestion.ForeColor = Color.White;
+            this.btnDeleteQuestion.FlatStyle = FlatStyle.Flat;
+            this.btnDeleteQuestion.FlatAppearance.BorderSize = 0;
+
+            // DataGridView styling
+            this.dgvQuestions.BorderStyle = BorderStyle.None;
+            this.dgvQuestions.BackgroundColor = Color.White;
+            this.dgvQuestions.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 150, 136);
+            this.dgvQuestions.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            this.dgvQuestions.EnableHeadersVisualStyles = false;
+        }
+
+        private void LoadQuestions()
+        {
+            var questions = _questionService.GetAllQuestions();
+            dgvQuestions.DataSource = questions.Select(q => new
             {
-                cmbCategories.Items.Add(new ComboBoxItem { Text = category.CategoryName, Value = category.CategoryID });
+                q.QuestionID,
+                Category = _categoryService.GetCategoryById(q.CategoryID).CategoryName,
+                Question = q.QuestionText.Length > 50 ? q.QuestionText.Substring(0, 47) + "..." : q.QuestionText
+            }).ToList();
+
+            dgvQuestions.Columns["QuestionID"].Visible = false;
+            dgvQuestions.AutoResizeColumns();
+            dgvQuestions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
+
+        private void btnViewDetails_Click(object sender, EventArgs e)
+        {
+            if (dgvQuestions.SelectedRows.Count > 0)
+            {
+                int questionId = (int)dgvQuestions.SelectedRows[0].Cells["QuestionID"].Value;
+                var question = _questionService.GetAllQuestions().FirstOrDefault(q => q.QuestionID == questionId);
+                if (question != null)
+                {
+                    string details = $"Question: {question.QuestionText}\n\n" +
+                                     $"Correct Answer: {question.CorrectAnswer}\n" +
+                                     $"Wrong Answer 1: {question.WrongAnswer1}\n" +
+                                     $"Wrong Answer 2: {question.WrongAnswer2}\n" +
+                                     $"Wrong Answer 3: {question.WrongAnswer3}";
+                    MessageBox.Show(details, "Question Details", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a question to view details.", "No Question Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -41,29 +109,38 @@ namespace AI_PROJECT.UI
         {
             try
             {
-                var selectedCategory = (ComboBoxItem)cmbCategories.SelectedItem;
-                var question = new Question
-                {
-                    CategoryID = (int)selectedCategory.Value,
-                    QuestionText = txtQuestionText.Text,
-                    CorrectAnswer = txtCorrectAnswer.Text,
-                    WrongAnswer1 = txtWrongAnswer1.Text,
-                    WrongAnswer2 = txtWrongAnswer2.Text,
-                    WrongAnswer3 = txtWrongAnswer3.Text
-                };
-
                 if (btnAddQuestion.Text == "Update Question")
                 {
-                    question.QuestionID = ((Question)((ListBoxItem)lstQuestions.SelectedItem).Value).QuestionID;
-                    _questionService.UpdateQuestion(question);
+                    // Update existing question
+                    var selectedQuestionId = (int)dgvQuestions.SelectedRows[0].Cells["QuestionID"].Value;
+                    var updatedQuestion = new Question
+                    {
+                        QuestionID = selectedQuestionId,
+                        CategoryID = ((Category)cmbCategories.SelectedItem).CategoryID,
+                        QuestionText = txtQuestionText.Text,
+                        CorrectAnswer = txtCorrectAnswer.Text,
+                        WrongAnswer1 = txtWrongAnswer1.Text,
+                        WrongAnswer2 = txtWrongAnswer2.Text,
+                        WrongAnswer3 = txtWrongAnswer3.Text
+                    };
+                    _questionService.UpdateQuestion(updatedQuestion);
                     MessageBox.Show("Question updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    _questionService.AddQuestion(question);
+                    // Add new question
+                    var newQuestion = new Question
+                    {
+                        CategoryID = ((Category)cmbCategories.SelectedItem).CategoryID,
+                        QuestionText = txtQuestionText.Text,
+                        CorrectAnswer = txtCorrectAnswer.Text,
+                        WrongAnswer1 = txtWrongAnswer1.Text,
+                        WrongAnswer2 = txtWrongAnswer2.Text,
+                        WrongAnswer3 = txtWrongAnswer3.Text
+                    };
+                    _questionService.AddQuestion(newQuestion);
                     MessageBox.Show("Question added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-
                 ClearFields();
                 LoadQuestions();
             }
@@ -73,52 +150,24 @@ namespace AI_PROJECT.UI
             }
         }
 
-        private void ClearFields()
-        {
-            cmbCategories.SelectedIndex = -1;
-            txtQuestionText.Clear();
-            txtCorrectAnswer.Clear();
-            txtWrongAnswer1.Clear();
-            txtWrongAnswer2.Clear();
-            txtWrongAnswer3.Clear();
-            btnAddQuestion.Text = "Add Question";
-            btnCancel.Visible = false;
-        }
-
-        private void LoadQuestions()
-        {
-            lstQuestions.Items.Clear();
-            var questions = _questionService.GetAllQuestions();
-            foreach (var question in questions)
-            {
-                lstQuestions.Items.Add(new ListBoxItem { Text = question.QuestionText, Value = question });
-            }
-        }
-
-        private void btnViewQuestion_Click(object sender, EventArgs e)
-        {
-            if (lstQuestions.SelectedItem is ListBoxItem selectedItem)
-            {
-                var question = (Question)selectedItem.Value;
-                MessageBox.Show($"Question: {question.QuestionText}\n\n" +
-                                $"Correct Answer: {question.CorrectAnswer}\n" +
-                                $"Wrong Answer 1: {question.WrongAnswer1}\n" +
-                                $"Wrong Answer 2: {question.WrongAnswer2}\n" +
-                                $"Wrong Answer 3: {question.WrongAnswer3}",
-                                "Question Details", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show("Please select a question to view.", "No Question Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-
         private void btnEditQuestion_Click(object sender, EventArgs e)
         {
-            if (lstQuestions.SelectedItem is ListBoxItem selectedItem)
+            if (dgvQuestions.SelectedRows.Count > 0)
             {
-                var question = (Question)selectedItem.Value;
-                PopulateFields(question);
+                int questionId = (int)dgvQuestions.SelectedRows[0].Cells["QuestionID"].Value;
+                var question = _questionService.GetAllQuestions().FirstOrDefault(q => q.QuestionID == questionId);
+                if (question != null)
+                {
+                    cmbCategories.SelectedItem = cmbCategories.Items.Cast<Category>().FirstOrDefault(c => c.CategoryID == question.CategoryID);
+                    txtQuestionText.Text = question.QuestionText;
+                    txtCorrectAnswer.Text = question.CorrectAnswer;
+                    txtWrongAnswer1.Text = question.WrongAnswer1;
+                    txtWrongAnswer2.Text = question.WrongAnswer2;
+                    txtWrongAnswer3.Text = question.WrongAnswer3;
+
+                    btnAddQuestion.Text = "Update Question";
+                    btnCancel.Visible = true;
+                }
             }
             else
             {
@@ -126,18 +175,18 @@ namespace AI_PROJECT.UI
             }
         }
 
+
         private void btnDeleteQuestion_Click(object sender, EventArgs e)
         {
-            if (lstQuestions.SelectedItem is ListBoxItem selectedItem)
+            if (dgvQuestions.SelectedRows.Count > 0)
             {
-                var question = (Question)selectedItem.Value;
-                var result = MessageBox.Show($"Are you sure you want to delete the question:\n\n{question.QuestionText}",
-                                             "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                int questionId = (int)dgvQuestions.SelectedRows[0].Cells["QuestionID"].Value;
+                var result = MessageBox.Show("Are you sure you want to delete this question?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
                 {
                     try
                     {
-                        _questionService.DeleteQuestion(question.QuestionID);
+                        _questionService.DeleteQuestion(questionId);
                         LoadQuestions();
                         ClearFields();
                         MessageBox.Show("Question deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -154,22 +203,29 @@ namespace AI_PROJECT.UI
             }
         }
 
-        private void PopulateFields(Question question)
-        {
-            cmbCategories.SelectedItem = cmbCategories.Items.Cast<ComboBoxItem>().FirstOrDefault(item => (int)item.Value == question.CategoryID);
-            txtQuestionText.Text = question.QuestionText;
-            txtCorrectAnswer.Text = question.CorrectAnswer;
-            txtWrongAnswer1.Text = question.WrongAnswer1;
-            txtWrongAnswer2.Text = question.WrongAnswer2;
-            txtWrongAnswer3.Text = question.WrongAnswer3;
-            btnAddQuestion.Text = "Update Question";
-            btnCancel.Visible = true;
-        }
-
         private void btnCancel_Click(object sender, EventArgs e)
         {
             ClearFields();
-            LoadQuestions();
+        }
+
+        private void ClearFields()
+        {
+            cmbCategories.SelectedIndex = -1;
+            txtQuestionText.Clear();
+            txtCorrectAnswer.Clear();
+            txtWrongAnswer1.Clear();
+            txtWrongAnswer2.Clear();
+            txtWrongAnswer3.Clear();
+            btnAddQuestion.Text = "Add Question";
+            btnCancel.Visible = false;
+        }
+
+        private void LoadCategories()
+        {
+            var categories = _categoryService.GetAllCategories();
+            cmbCategories.DataSource = categories;
+            cmbCategories.DisplayMember = "CategoryName";
+            cmbCategories.ValueMember = "CategoryID";
         }
 
     }

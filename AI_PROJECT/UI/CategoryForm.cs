@@ -20,8 +20,25 @@ namespace AI_PROJECT.UI
         {
             InitializeComponent();
             _categoryService = new CategoryService();
-            FormStyling.ApplyStyles(this);
+            ApplyCustomStyles();
             LoadCategories();
+        }
+
+        private void ApplyCustomStyles()
+        {
+            this.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+
+            foreach (Control control in this.pnlMain.Controls)
+            {
+                if (control is Button)
+                {
+                    ((Button)control).FlatStyle = FlatStyle.Flat;
+                    ((Button)control).FlatAppearance.BorderSize = 0;
+                    ((Button)control).Cursor = Cursors.Hand;
+                }
+            }
+
+            lstCategories.BorderStyle = BorderStyle.FixedSingle;
         }
 
         private void LoadCategories()

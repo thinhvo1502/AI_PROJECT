@@ -141,6 +141,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -155,6 +156,27 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\DeleteIcon.webp" />
+    <None Include="Resources\QuestionIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CategoryIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CreateExamIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TakeExamIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HistoryIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\EditIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DeleteIcon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

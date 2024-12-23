@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using AI_PROJECT.BLL;
 using AI_PROJECT.DAL.Models;
 using AI_PROJECT.UI;
+using System.Drawing.Imaging;
 
 namespace AI_PROJECT
 {
@@ -19,15 +20,94 @@ namespace AI_PROJECT
        private System.ComponentModel.IContainer components = null;
         private UserService _userService;
         private ExamService _examService;
-        private System.Windows.Forms.Button btnExamHistory;
 
         public MainForm(UserService userService)
         {
             InitializeComponent();
             _userService = userService;
             _examService = new ExamService();
-            FormStyling.ApplyStyles(this);
+            ApplyCustomStyles();
             UpdateButtonVisibility();
+        }
+        private void ApplyCustomStyles()
+        {
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+
+            foreach (Control control in pnlSidebar.Controls)
+            {
+                if (control is Button)
+                {
+                    ((Button)control).FlatAppearance.MouseOverBackColor = Color.FromArgb(44, 62, 80);
+                    ((Button)control).FlatAppearance.MouseDownBackColor = Color.FromArgb(52, 73, 94);
+                    ((Button)control).Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+                    ((Button)control).Cursor = Cursors.Hand;
+                    ((Button)control).Image = GetButtonIcon(control.Name);
+                    ((Button)control).ImageAlign = ContentAlignment.MiddleLeft;
+                    ((Button)control).TextAlign = ContentAlignment.MiddleLeft;
+                    ((Button)control).TextImageRelation = TextImageRelation.ImageBeforeText;
+                    ((Button)control).Padding = new Padding(10, 0, 0, 0);
+/*                    ((Button)control).ImageScaling = ToolStripItemImageScaling.None;
+*/                }
+            }
+        }
+
+        private Image GetButtonIcon(string buttonName)
+        {
+            Image originalImage = null;
+            switch (buttonName)
+            {
+                case "btnManageCategories":
+                    originalImage = Properties.Resources.CategoryIcon;
+                    break;
+                case "btnManageQuestions":
+                    originalImage = Properties.Resources.QuestionIcon;
+                    break;
+                case "btnCreateExam":
+                    originalImage = Properties.Resources.CreateExamIcon;
+                    break;
+                case "btnTakeExam":
+                    originalImage = Properties.Resources.TakeExamIcon;
+                    break;
+                case "btnExamHistory":
+                    originalImage = Properties.Resources.HistoryIcon;
+                    break;
+                case "btnEditExam":
+                    originalImage = Properties.Resources.EditIcon;
+                    break;
+                case "btnDeleteExam":
+                    originalImage = Properties.Resources.DeleteIcon;
+                    break;
+                default:
+                    return null;
+            }
+
+            return originalImage != null ? ResizeImage(originalImage, 24, 24) : null;
+        }
+
+        private Image ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
         }
 
         private void UpdateButtonVisibility()
@@ -36,8 +116,8 @@ namespace AI_PROJECT
             btnManageCategories.Visible = isAdmin;
             btnManageQuestions.Visible = isAdmin;
             btnCreateExam.Visible = isAdmin;
-            btnTakeExam.Visible = true; // Tất cả người dùng đều có thể làm bài thi
-            btnExamHistory.Visible = true; //All users can view exam history.
+            btnTakeExam.Visible = true;
+            btnExamHistory.Visible = true;
             btnEditExam.Visible = isAdmin;
             btnDeleteExam.Visible = isAdmin;
         }
@@ -137,6 +217,7 @@ namespace AI_PROJECT
                 MessageBox.Show("You don't have permission to access this feature.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
 
 
 

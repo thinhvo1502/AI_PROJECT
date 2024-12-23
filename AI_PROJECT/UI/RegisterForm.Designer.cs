@@ -39,16 +39,19 @@
             this.rbAdmin = new System.Windows.Forms.RadioButton();
             this.rbUser = new System.Windows.Forms.RadioButton();
             this.groupBoxRole = new System.Windows.Forms.GroupBox();
+            this.pnlMain = new System.Windows.Forms.Panel();
             this.groupBoxRole.SuspendLayout();
+            this.pnlMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
-            this.lblTitle.Font = FormStyling.HeaderFont;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(128)))), ((int)(((byte)(185)))));
             this.lblTitle.Location = new System.Drawing.Point(30, 30);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(200, 30);
+            this.lblTitle.Size = new System.Drawing.Size(280, 32);
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "Register New Account";
             // 
@@ -145,28 +148,41 @@
             this.groupBoxRole.TabStop = false;
             this.groupBoxRole.Text = "Role";
             // 
+            // pnlMain
+            // 
+            this.pnlMain.BackColor = System.Drawing.Color.White;
+            this.pnlMain.Controls.Add(this.lblTitle);
+            this.pnlMain.Controls.Add(this.lblUsername);
+            this.pnlMain.Controls.Add(this.lblPassword);
+            this.pnlMain.Controls.Add(this.lblConfirmPassword);
+            this.pnlMain.Controls.Add(this.txtUsername);
+            this.pnlMain.Controls.Add(this.txtPassword);
+            this.pnlMain.Controls.Add(this.txtConfirmPassword);
+            this.pnlMain.Controls.Add(this.btnRegister);
+            this.pnlMain.Controls.Add(this.groupBoxRole);
+            this.pnlMain.Location = new System.Drawing.Point(12, 12);
+            this.pnlMain.Name = "pnlMain";
+            this.pnlMain.Size = new System.Drawing.Size(376, 326);
+            this.pnlMain.TabIndex = 11;
+            // 
             // RegisterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
             this.ClientSize = new System.Drawing.Size(400, 350);
-            this.Controls.Add(this.groupBoxRole);
-            this.Controls.Add(this.btnRegister);
-            this.Controls.Add(this.txtConfirmPassword);
-            this.Controls.Add(this.txtPassword);
-            this.Controls.Add(this.txtUsername);
-            this.Controls.Add(this.lblConfirmPassword);
-            this.Controls.Add(this.lblPassword);
-            this.Controls.Add(this.lblUsername);
-            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.pnlMain);
             this.Font = FormStyling.NormalFont;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "RegisterForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Register";
             this.groupBoxRole.ResumeLayout(false);
             this.groupBoxRole.PerformLayout();
+            this.pnlMain.ResumeLayout(false);
+            this.pnlMain.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
         }
 
         private System.Windows.Forms.Label lblTitle;
@@ -180,6 +196,7 @@
         private System.Windows.Forms.RadioButton rbAdmin;
         private System.Windows.Forms.RadioButton rbUser;
         private System.Windows.Forms.GroupBox groupBoxRole;
+        private System.Windows.Forms.Panel pnlMain;
 
 
         #endregion

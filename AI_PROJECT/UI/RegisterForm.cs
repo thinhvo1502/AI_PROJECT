@@ -19,23 +19,49 @@ namespace AI_PROJECT.UI
             public RegisterForm(UserService userService)
             {
                 InitializeComponent();
-            FormStyling.ApplyStyles(this);
+            ApplyCustomStyles();
             _userService = userService;
             }
 
-            private void btnRegister_Click(object sender, EventArgs e)
+
+        private void ApplyCustomStyles()
+        {
+            FormStyling.ApplyStyles(this);
+
+            // Custom styles for RegisterForm
+            this.pnlMain.BorderStyle = BorderStyle.FixedSingle;
+
+            this.btnRegister.BackColor = Color.FromArgb(41, 128, 185);
+            this.btnRegister.ForeColor = Color.White;
+            this.btnRegister.FlatStyle = FlatStyle.Flat;
+            this.btnRegister.FlatAppearance.BorderSize = 0;
+
+            this.groupBoxRole.ForeColor = Color.FromArgb(52, 73, 94);
+        }
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            string username = txtUsername.Text;
+            string password = txtPassword.Text;
+            string confirmPassword = txtConfirmPassword.Text;
+            string role = rbAdmin.Checked ? "Admin" : "User";
+
+            if (password != confirmPassword)
             {
-                try
-                {
-                    string role = rbAdmin.Checked ? "Admin" : "User";
-                    _userService.RegisterUser(txtUsername.Text, txtPassword.Text, role);
-                    MessageBox.Show("User registered successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                MessageBox.Show("Passwords do not match.", "Registration Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                _userService.RegisterUser(username, password, role);
+                MessageBox.Show("Registration successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.Close();
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message, "Registration Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+    }
     }
